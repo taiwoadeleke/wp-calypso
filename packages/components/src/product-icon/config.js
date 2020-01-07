@@ -43,4 +43,6 @@ export const iconToProductSlugMap = {
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
 };
 
-export const supportedSlugs = [ ...Object.values( iconToProductSlugMap ) ].flat();
+export const supportedSlugs = [ ...Object.values( iconToProductSlugMap ) ].reduce( ( a, b ) =>
+	a.concat( b )
+);
