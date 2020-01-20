@@ -22,9 +22,10 @@ export const setupWpDataDebug = () => {
 					client_secret: config( 'wpcom_signup_key' ),
 				};
 
-				const { Auth, Site } = require( '@automattic/data-stores' );
+				const { Auth, Site, User } = require( '@automattic/data-stores' );
 				const AUTH_STORE = Auth.register( clientCreds );
 				Site.register( clientCreds );
+				User.register( clientCreds );
 
 				window.wp.auth = {};
 				for ( const [ actionName, actionFn ] of Object.entries(
