@@ -23,7 +23,8 @@
 
 		"typeRoots": [ "../../node_modules/@types" ],
 		// "types": [],
-		"lib": [ "ESNext", "DOM" ]
+		"lib": [ "ESNext", "DOM" ],
+		"skipLibCheck": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

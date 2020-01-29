@@ -8,8 +8,8 @@ These modules live under the `packages` and `apps` directories, one folder per m
 
 Two different directories for modules are:
 
-`/packages` — projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso and build on `npm start`. See "Publishing" below.
-`/apps` — projects that can produce independent, binary-like outputs deployed elsewhere. Typically not published to NPM or build on `npm start`.
+`/packages` — projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso and build on `yarn start`. See "Publishing" below.
+`/apps` — projects that can produce independent, binary-like outputs deployed elsewhere. Typically not published to NPM or build on `yarn start`.
 
 Modules should follow our convention for layout:
 
@@ -69,7 +69,7 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 	"files": [ "dist", "src" ],
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"prepare": "transpile"
 	}
 }
@@ -77,26 +77,26 @@ The only exception are `devDependencies` which _must be declared in the wp-calyp
 
 If your package requires compilation, the `package.json` `prepare` script should compile the package. If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds.
 
-Running `npm run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
+Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
 ## Running Tests
 
 To run all of the package tests:
 
-`npm run test-packages`
+`yarn run test-packages`
 
 To run one package's tests:
 
-`npm run test-packages [ test file pattern ]`
+`yarn run test-packages [ test file pattern ]`
 
 ## Building packages & apps
 
-Packages will have their `prepare` scripts run automatically on `npm install`.
+Packages will have their `prepare` scripts run automatically on `yarn`.
 
 You can build packages also by running:
 
 ```bash
-npm run build-packages
+yarn run build-packages
 ```
 
 Or even specific packages:
@@ -111,7 +111,7 @@ Or specific apps:
 npx lerna run build --scope="@automattic/calypso-build"
 ```
 
-All `prepare` scripts found in all `package.json`s of apps and packages are always run on Calypso's `npm install`. Therefore independent apps in `/apps` directory can use `build` instead of `prepare` so avoid unnecessary builds.
+All `prepare` scripts found in all `package.json`s of apps and packages are always run on Calypso's `yarn`. Therefore independent apps in `/apps` directory can use `build` instead of `prepare` so avoid unnecessary builds.
 
 You can also run other custom `package.json` scripts only for your app or package:
 
@@ -142,8 +142,8 @@ Using [Lerna](https://lernajs.io/) to publish package(s):
 1. `git checkout master`
 1. `git pull`
 1. `git status` (should be clean!)
-1. `npm run distclean`
-1. `npm ci`
+1. `yarn run distclean`
+1. `yarn install --frozen-lockfile`
 1. `npx lerna publish from-package`
 1. Say “no” at the prompt.
 1. Lerna will confirm which packages and versions will be published. If something looks off, abort!
