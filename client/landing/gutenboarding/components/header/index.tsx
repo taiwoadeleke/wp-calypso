@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useI18n, withI18n } from '@automattic/react-i18n';
+import { useI18n, withI18n, I18nProvider } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useCallback } from 'react';
@@ -123,6 +123,8 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 		}
 	}, [ newSite, resetOnboardStore ] );
 
+	const ld = React.useRef( { 'Create your site': [ 'Créer votre site' ] } );
+
 	return (
 		<div
 			className="gutenboarding__header"
@@ -138,20 +140,22 @@ const Header: FunctionComponent< Props > = ( { prev } ) => {
 					</Link>
 				</div>
 				<div className="gutenboarding__header-group">
-					{ siteTitle ? (
-						<DomainPickerButton
-							className="gutenboarding__header-domain-picker-button"
-							defaultQuery={ siteTitle }
-							disabled={ ! currentDomain }
-							onDomainSelect={ setDomain }
-							queryParameters={ { vertical: siteVertical?.id } }
-						>
+					<I18nProvider locale="fr" localeData={ ld.current }>
+						{ siteTitle ? (
+							<DomainPickerButton
+								className="gutenboarding__header-domain-picker-button"
+								defaultQuery={ siteTitle }
+								disabled={ ! currentDomain }
+								onDomainSelect={ setDomain }
+								queryParameters={ { vertical: siteVertical?.id } }
+							>
+								<STR siteTitle={ siteTitle } />
+								{ domainElement }
+							</DomainPickerButton>
+						) : (
 							<STR siteTitle={ siteTitle } />
-							{ domainElement }
-						</DomainPickerButton>
-					) : (
-						<STR siteTitle={ siteTitle } />
-					) }
+						) }
+					</I18nProvider>
 				</div>
 			</div>
 			<div className="gutenboarding__header-section">
@@ -181,6 +185,7 @@ export default Header;
 const STR = withI18n(
 	class extends React.PureComponent {
 		render() {
+			console.log( 'Rerendered!' );
 			return (
 				<span className="gutenboarding__site-title">
 					{ this.props.siteTitle ? this.props.siteTitle : this.props.__( 'Create your site' ) }
