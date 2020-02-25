@@ -78,7 +78,7 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canDomainAddGSuite } from 'lib/gsuite';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
-import { fetchSitesAndUser } from 'lib/signup/step-actions';
+import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
