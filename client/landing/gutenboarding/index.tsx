@@ -46,10 +46,9 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	let locale = DEFAULT_LOCALE_SLUG;
 	let localeData;
 	try {
-		[ locale, localeData ] = await getLocale();
+		localeData = await getLocale();
 
 		// FIXME: Use rtl detection tooling
 		if ( ( localeData as any )[ 'text direction\u0004ltr' ]?.[ 0 ] === 'rtl' ) {
@@ -58,7 +57,7 @@ window.AppBoot = async () => {
 	} catch {}
 
 	ReactDom.render(
-		<CalypsoI18nProvider initialLocale={ locale } initialLocaleData={ localeData as any }>
+		<CalypsoI18nProvider initialLocaleData={ localeData as any }>
 			<BrowserRouter basename="gutenboarding">
 				<Switch>
 					<Route exact path={ path }>
@@ -75,28 +74,20 @@ window.AppBoot = async () => {
 };
 
 const CalypsoI18nProvider: FunctionComponent< {
-	initialLocale: string;
 	initialLocaleData: any;
-} > = ( { children, initialLocale, initialLocaleData } ) => {
-	const [ [ locale, localeData ], setLocale ] = React.useState( [
-		initialLocale,
-		initialLocaleData,
-	] );
+} > = ( { children, initialLocaleData } ) => {
+	const [ localeData, setLocale ] = React.useState( initialLocaleData );
 
 	// Debugging
 	useEffect( () => {
 		window.updateLocale = async ( newLocale: string ) => {
 			try {
 				const newLocaleData = await getLanguageFile( newLocale );
-				setLocale( [ newLocale, newLocaleData ] );
+				setLocale( newLocaleData );
 			} catch {}
 		};
 	}, [] );
-	return (
-		<I18nProvider locale={ locale } localeData={ localeData }>
-			{ children }
-		</I18nProvider>
-	);
+	return <I18nProvider localeData={ localeData }>{ children }</I18nProvider>;
 };
 
 /**
@@ -109,32 +100,32 @@ const CalypsoI18nProvider: FunctionComponent< {
  * 5. TODO (#39312): If we have a URL locale slug, fetch and use data.
  * 6. Fallback to "en" locale without data.
  *
- * @returns Tuple of locale slug and locale data
+ * @returns Locale data
  */
-async function getLocale(): Promise< [ string, object ] > {
+async function getLocale(): Promise< object > {
 	// Explicit locale slug.
 	const pathname = new URL( window.location.href ).pathname;
 	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
 	if ( getLanguageSlugs().includes( lastPathSegment ) ) {
 		const data = await getLocaleData( lastPathSegment );
-		return [ lastPathSegment, data ];
+		return data;
 	}
 
 	// Bootstraped locale
 	if ( window.i18nLocaleStrings ) {
 		const bootstrappedLocaleData = JSON.parse( window.i18nLocaleStrings );
-		return [ bootstrappedLocaleData[ '' ].localeSlug, bootstrappedLocaleData ];
+		return bootstrappedLocaleData;
 	}
 
 	// User without bootstrapped locale
 	const user = window.currentUser || ( await waitForCurrentUser() );
 	if ( ! user ) {
-		return [ DEFAULT_LOCALE_SLUG, {} ];
+		return {};
 	}
 	const localeSlug: string = getLocaleFromUser( user );
 
 	const data = await getLocaleData( localeSlug );
-	return [ localeSlug, data ];
+	return data;
 }
 
 async function getLocaleData( locale: string ) {
