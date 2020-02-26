@@ -129,9 +129,9 @@ export function generateFlows( {
 				'domains-with-preview',
 				'plans',
 			],
-			destination: getSignupDestination,
+			destination: getThankYouNoSiteDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2020-02-05',
+			lastModified: '2020-02-26',
 			showRecaptcha: true,
 		},
 
