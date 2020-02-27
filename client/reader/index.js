@@ -37,7 +37,7 @@ function forceTeamA8C( context, next ) {
 
 export const READER_READ_DEFINITION = {
 	name: 'reader',
-	paths: [ '/', '/read' ],
+	paths: [ '/read' ],
 	module: 'reader',
 	secondary: true,
 	group: 'reader',
