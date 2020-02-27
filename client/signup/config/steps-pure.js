@@ -34,6 +34,7 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	createSitelessCart = noop,
+	addSitelessPlanToCart = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -166,6 +167,14 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
+		'plans-siteless': {
+			stepName: 'plans-siteless',
+			apiRequestFunction: addSitelessPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
 		'plans-ecommerce': {
 			stepName: 'plans-ecommerce',
 			apiRequestFunction: addPlanToCart,
@@ -191,7 +200,7 @@ export function generateSteps( {
 
 		'plans-personal': {
 			stepName: 'plans-personal',
-			apiRequestFunction: addPlanToCart,
+			apiRequestFunction: addSitelessPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
@@ -202,7 +211,7 @@ export function generateSteps( {
 
 		'plans-premium': {
 			stepName: 'plans-premium',
-			apiRequestFunction: addPlanToCart,
+			apiRequestFunction: addSitelessPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
@@ -213,7 +222,7 @@ export function generateSteps( {
 
 		'plans-business': {
 			stepName: 'plans-business',
-			apiRequestFunction: addPlanToCart,
+			apiRequestFunction: addSitelessPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
@@ -540,6 +549,25 @@ export function generateSteps( {
 
 		'domains-with-preview': {
 			stepName: 'domains-with-preview',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
+			props: {
+				showSiteMockups: true,
+				isDomainOnly: false,
+			},
+			dependencies: [ 'themeSlugWithRepo' ],
+			delayApiRequestUntilComplete: true,
+		},
+
+		'domains-siteless': {
+			stepName: 'domains-siteless',
 			apiRequestFunction: createSitelessCart,
 			providesDependencies: [
 				'siteId',

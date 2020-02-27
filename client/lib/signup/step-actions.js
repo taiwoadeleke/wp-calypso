@@ -278,21 +278,16 @@ export function createSitelessCart( callback, dependencies, stepData, reduxStore
 		themeItem,
 	};
 
-	const cartItemsWithPrivacyProtection = cartItems.map( item =>
-		addPrivacyProtectionIfSupported( item, reduxStore )
+	processItemCart(
+		providedDependencies,
+		cartItems,
+		callback,
+		reduxStore,
+		siteSlug,
+		isFreeThemePreselected,
+		themeSlugWithRepo,
+		true
 	);
-
-	if ( isFreeThemePreselected ) {
-		// TODO: Set theme after site is created
-	}
-
-	if ( cartItemsWithPrivacyProtection.length ) {
-		SignupCart.createCart( siteSlug, cartItemsWithPrivacyProtection, error => {
-			callback( error, providedDependencies );
-		} );
-	} else {
-		callback( undefined, providedDependencies );
-	}
 }
 
 function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
@@ -334,7 +329,13 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		} );
 }
 
-export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+export function addPlanToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	isSiteless = false
+) {
 	const { siteSlug } = dependencies;
 	const { cartItem } = stepProvidedItems;
 	if ( isEmpty( cartItem ) ) {
@@ -348,7 +349,20 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 
 	const newCartItems = [ cartItem ].filter( item => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart(
+		providedDependencies,
+		newCartItems,
+		callback,
+		reduxStore,
+		siteSlug,
+		null,
+		null,
+		isSiteless
+	);
+}
+
+export function addSitelessPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+	addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore, true );
 }
 
 export function addDomainToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
@@ -368,7 +382,8 @@ function processItemCart(
 	reduxStore,
 	siteSlug,
 	isFreeThemePreselected,
-	themeSlugWithRepo
+	themeSlugWithRepo,
+	isSiteless = false
 ) {
 	const addToCartAndProceed = () => {
 		const newCartItemsToAdd = newCartItems.map( item =>
@@ -384,7 +399,10 @@ function processItemCart(
 		}
 	};
 
-	if ( ! user.get() && isFreeThemePreselected ) {
+	if ( isSiteless ) {
+		// TODO: Fetch sites and set theme after site is created
+		addToCartAndProceed();
+	} else if ( ! user.get() && isFreeThemePreselected ) {
 		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
 	} else if ( user.get() && isFreeThemePreselected ) {
 		fetchSitesAndUser(
