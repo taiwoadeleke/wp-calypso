@@ -135,7 +135,7 @@ export default {
 		localeTargets: 'any',
 	},
 	planStepCopyUpdates: {
-		datestamp: '20200221',
+		datestamp: '20200227',
 		variations: {
 			variantCopyUpdates: 50,
 			control: 50,
