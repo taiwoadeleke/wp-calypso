@@ -56,7 +56,7 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
 	getTheme,
