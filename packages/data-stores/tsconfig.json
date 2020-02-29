@@ -30,6 +30,7 @@
 		"composite": true,
 		"tsBuildInfoFile": "../../.tsc-cache/data-stores"
 	},
+	"files": [ "./global.d.ts" ],
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }
