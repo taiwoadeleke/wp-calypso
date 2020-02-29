@@ -25,7 +25,9 @@
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": [],
 
-		"importHelpers": true
+		"importHelpers": true,
+		"composite": true,
+		"tsBuildInfoFile": "../../.tsc-cache/react-i18n"
 	},
 	"files": [ "./src/index.tsx" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

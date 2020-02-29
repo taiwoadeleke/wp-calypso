@@ -21,6 +21,8 @@
 
 		"forceConsistentCasingInFileNames": true,
 
+		"composite": true,
+		"tsBuildInfoFile": "../../.tsc-cache/media-library",
 		"typeRoots": [ "../../node_modules/@types" ],
 		// "types": [],
 		"lib": [ "ESNext", "DOM" ],

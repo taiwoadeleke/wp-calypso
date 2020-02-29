@@ -26,7 +26,7 @@
 		"noEmitHelpers": true,
 		"importHelpers": true,
 
-		"incremental": true,
+		"composite": true,
 		"tsBuildInfoFile": "../../.tsc-cache/data-stores"
 	},
 	"files": [ "./src/index.ts" ],

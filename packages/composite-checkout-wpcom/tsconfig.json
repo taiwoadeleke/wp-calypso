@@ -24,7 +24,7 @@
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": [],
 
-		"incremental": true,
+		"composite": true,
 		"tsBuildInfoFile": "../../.tsc-cache/composite-checkout-wpcom"
 	},
 	"include": [ "src/**/*" ],
