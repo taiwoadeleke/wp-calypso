@@ -8,6 +8,7 @@
 		"declaration": true,
 		"declarationDir": "dist/types",
 		"outDir": "./dist/esm",
+		"rootDir": "src",
 
 		"strict": true,
 		"noImplicitAny": false,
@@ -27,6 +28,6 @@
 		"composite": true,
 		"tsBuildInfoFile": "../../.tsc-cache/composite-checkout-wpcom"
 	},
-	"include": [ "src/**/*" ],
+	"include": [ "src" ],
 	"exclude": [ "**/test/**/*", "**/docs/**/*" ]
 }

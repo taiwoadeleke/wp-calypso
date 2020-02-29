@@ -10,6 +10,7 @@
 		"declaration": true,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
+		"rootDir": "src",
 
 		"strict": true,
 		"noUnusedLocals": true,
@@ -29,6 +30,6 @@
 		"composite": true,
 		"tsBuildInfoFile": "../../.tsc-cache/react-i18n"
 	},
-	"files": [ "./src/index.tsx" ],
+	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }
