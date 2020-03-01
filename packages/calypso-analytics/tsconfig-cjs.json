@@ -5,6 +5,8 @@
 		"declaration": false,
 		"declarationDir": null,
 		"outDir": "dist/cjs",
+		"composite": false,
+		"incremental": true,
 		"tsBuildInfoFile": "../../.tsc-cache/calypso-analytics-cjs"
 	}
 }

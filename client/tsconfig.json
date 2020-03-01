@@ -7,17 +7,20 @@
 
 		"baseUrl": ".",
 		"rootDir": ".",
+		"paths": { "*": [ "./*" ] },
 		"tsBuildInfoFile": "../.tsc-cache/client",
 		"noEmit": true,
 		"composite": true,
 		"typeRoots": [ "../packages/calypso-build/typings", "../node_modules/@types" ]
 	},
 	"references": [
+		{ "path": "../packages/calypso-analytics" },
 		{ "path": "../packages/components" },
 		{ "path": "../packages/composite-checkout-wpcom" },
 		{ "path": "../packages/data-stores" },
 		{ "path": "../packages/media-library" },
 		{ "path": "../packages/react-i18n" }
 	],
-	"exclude": [ "server/bundler/assets*.json", "server/devdocs/search-index.js" ]
+	"include": [ "**/*" ],
+	"exclude": [ "**/test/**/*", "server/bundler/assets*.json", "server/devdocs/search-index.js" ]
 }
