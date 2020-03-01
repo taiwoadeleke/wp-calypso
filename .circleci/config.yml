@@ -233,7 +233,7 @@ jobs:
       - run:
           name: TypeScript typecheck
           # Report but don't fail the build (`|| exit 0`)
-          command: npm run typecheck || exit 0
+          command: npm run tsc -- --project client || exit 0
 
   typecheck-strict:
     <<: *defaults
@@ -242,7 +242,7 @@ jobs:
       - prepare
       - run:
           name: TypeScript strict typecheck of individual subprojects
-          command: npm run typecheck -- --project client/landing/gutenboarding
+          command: npm run tsc -- --project client/landing/gutenboarding
 
   lint-and-translate:
     <<: *defaults
