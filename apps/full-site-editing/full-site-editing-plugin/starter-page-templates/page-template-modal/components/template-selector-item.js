@@ -16,7 +16,7 @@ import { Disabled } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import BlockIframePreview from './block-iframe-preview';
+import BlockIframePreview from './block-frame-proxy';
 
 const TemplateSelectorItem = props => {
 	const {
