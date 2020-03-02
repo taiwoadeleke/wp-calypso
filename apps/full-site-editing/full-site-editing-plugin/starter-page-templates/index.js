@@ -14,7 +14,7 @@ import { get } from 'lodash';
 import { PageTemplatesPlugin } from './page-template-modal';
 import SidebarTemplatesPlugin from './page-template-modal/components/sidebar-modal-opener';
 import { initializeWithIdentity } from './page-template-modal/utils/tracking';
-import FramePreview from './page-template-modal/components/block-frame-preview';
+import { BlockFrameContent } from './page-template-modal/components/block-preview-render';
 /* eslint-enable import/no-extraneous-dependencies */
 
 // Load config passed from backend.
@@ -42,7 +42,7 @@ if ( isIframedContent ) {
 	window.document.body.className += ' is-frame-preview';
 	registerPlugin( 'frame-preview', {
 		render: () => {
-			return <FramePreview />;
+			return <BlockFrameContent />;
 		},
 	} );
 } else {

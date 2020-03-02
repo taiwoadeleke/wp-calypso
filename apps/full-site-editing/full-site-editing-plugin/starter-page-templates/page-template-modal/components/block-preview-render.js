@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { each, filter, get, castArray, debounce, noop } from 'lodash';
+import { get, castArray, debounce } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
+import { Modal } from '@wordpress/components';
 import {
 	useRef,
 	useEffect,
@@ -19,74 +20,18 @@ import {
 } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { compose, withSafeTimeout } from '@wordpress/compose';
-
+import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
+import { Disabled } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 /* eslint-enable import/no-extraneous-dependencies */
-
-import CustomBlockPreview from './block-preview';
 
 // Debounce time applied to the on resize window event.
 const DEBOUNCE_TIMEOUT = 300;
 
-/**
- * Copies the styles from the provided src document
- * to the given iFrame head and body DOM references.
- *
- * @param {object} srcDocument the src document from which to copy the
- * `link` and `style` Nodes from the `head` and `body`
- * @param {object} targetiFrameDocument the target iframe's
- * `contentDocument` where the `link` and `style` Nodes from the `head` and
- * `body` will be copied
- */
-const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
-	const styleNodes = [ 'link', 'style' ];
-
-	// See https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment
-	const targetDOMFragment = {
-		head: new DocumentFragment(), // eslint-disable-line no-undef
-		body: new DocumentFragment(), // eslint-disable-line no-undef
-	};
-
-	each( Object.keys( targetDOMFragment ), domReference => {
-		return each(
-			filter( srcDocument[ domReference ].children, ( { localName } ) =>
-				// Only return specific style-related Nodes
-				styleNodes.includes( localName )
-			),
-			targetNode => {
-				// Clone the original node and append to the appropriate Fragement
-				const deep = true;
-				targetDOMFragment[ domReference ].appendChild( targetNode.cloneNode( deep ) );
-			}
-		);
-	} );
-
-	// Consolidate updates to iframe DOM
-	targetiFrameDocument.head.appendChild( targetDOMFragment.head );
-	targetiFrameDocument.body.appendChild( targetDOMFragment.body );
-};
-
-/**
- * Performs a blocks preview using an iFrame.
- *
- * @param {object} props component's props
- * @param {object} props.className CSS class to apply to component
- * @param {string} props.bodyClassName CSS class to apply to the iframe's `<body>` tag
- * @param {number} props.viewportWidth pixel width of the viewable size of the preview
- * @param {Array}  props.blocks array of Gutenberg Block objects
- * @param {object} props.settings block Editor settings object
- * @param {Function} props.setTimeout safe version of window.setTimeout via `withSafeTimeout`
- */
-const BlockPreviewRender = ( {
-	className = 'block-preview-render',
-	bodyClassName = 'block-preview-render-body',
+export const BlockPreviewFrame = ( {
 	viewportWidth,
-	blocks,
-	settings,
-	setTimeout = noop,
+	className = 'block-preview-render',
 } ) => {
-	const frameContainerRef = useRef();
-	const renderedBlocksRef = useRef();
 	const iframeRef = useRef();
 
 	// Set the initial scale factor.
@@ -94,23 +39,18 @@ const BlockPreviewRender = ( {
 		transform: `scale( 1 )`,
 	} );
 
-	// Rendering blocks list.
-	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
-	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
-	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
-
 	/**
 	 * This function re scales the viewport depending on
 	 * the wrapper and the iframe width.
 	 */
 	const rescale = useCallback( () => {
-		const parentNode = get( frameContainerRef, [ 'current', 'parentNode' ] );
+		const parentNode = get( iframeRef, [ 'current', 'parentNode' ] );
 		if ( ! parentNode ) {
 			return;
 		}
 
 		// Scaling iFrame.
-		const width = viewportWidth || frameContainerRef.current.offsetWidth;
+		const width = viewportWidth || iframeRef.current.offsetWidth;
 		const scale = parentNode.offsetWidth / viewportWidth;
 		const height = parentNode.offsetHeight / scale;
 
@@ -121,35 +61,8 @@ const BlockPreviewRender = ( {
 		} );
 	}, [ viewportWidth ] );
 
-	// Populate iFrame styles.
-	useEffect( () => {
-		setTimeout( () => {
-			copyStylesToIframe( window.document, iframeRef.current.contentDocument );
-			iframeRef.current.contentDocument.body.classList.add( bodyClassName );
-			iframeRef.current.contentDocument.body.classList.add( 'editor-styles-wrapper' );
-			rescale();
-		}, 0 );
-	}, [ setTimeout, bodyClassName, rescale ] );
-
-	// Scroll the preview to the top when the blocks change.
-	useEffect( () => {
-		const body = get( iframeRef, [ 'current', 'contentDocument', 'body' ] );
-		if ( ! body ) {
-			return;
-		}
-
-		// scroll to top when blocks changes.
-		body.scrollTop = 0;
-	}, [ recomputeBlockListKey ] );
-
-	// Append rendered Blocks to iFrame when changed
-	useEffect( () => {
-		const renderedBlocksDOM = renderedBlocksRef && renderedBlocksRef.current;
-
-		if ( renderedBlocksDOM ) {
-			iframeRef.current.contentDocument.body.appendChild( renderedBlocksDOM );
-		}
-	}, [ recomputeBlockListKey ] );
+	// Set initial scale.
+	useEffect( rescale, [] );
 
 	// Handling windows resize event.
 	useEffect( () => {
@@ -173,31 +86,82 @@ const BlockPreviewRender = ( {
 		};
 	}, [ rescale ] );
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div ref={ frameContainerRef }>
-			<iframe
-				ref={ iframeRef }
-				title={ __( 'Preview' ) }
-				className={ classnames( 'editor-styles-wrapper', className ) }
-				style={ style }
-			/>
+		<iframe
+			src="#iframepreview=true"
+			ref={ iframeRef }
+			title={ __( 'Preview' ) }
+			className={ classnames( 'editor-styles-wrapper', className ) }
+			style={ style }
+		/>
+	)
+};
 
-			<div ref={ renderedBlocksRef } className="block-editor" id="rendered-blocks">
+export const BlockFrameContent = ( { unparsed_html } ) => {
+	const renderedBlocksRef = useRef();
+	// Getting template slug from parent post message.
+	const [ html, setHTML ] = useState( unparsed_html );
+	const receiveMessage = ( { data: slug } ) => {
+		if ( ! slug ) {
+			return;
+		}
+		setHTML( slug );
+	};
+
+	// Listening parent messages.
+	useEffect( () => {
+		window.addEventListener( 'message', receiveMessage, false );
+
+		return () => {
+			window.removeEventListener( 'message', receiveMessage, false );
+		};
+	}, [] );
+
+	return (
+		<Modal
+			className="frame-preview-modal"
+			overlayClassName="frame-preview-modal-screen-overlay"
+			shouldCloseOnClickOutside={ false }
+			isDismissable={ false }
+			isDismissible={ false }
+		>
+			<div ref={ renderedBlocksRef } className="block-editor block-frame-preview__container">
 				<div className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper">
-						<div className="editor-writing-flow">
-							{ blocks && blocks.length ? (
-								<CustomBlockPreview
-									blocks={ renderedBlocks }
-									settings={ settings }
-									recomputeBlockListKey={ recomputeBlockListKey }
-								/>
-							) : null }
-						</div>
+						<div className="editor-writing-flow"></div>
 					</div>
 				</div>
 			</div>
+		</Modal>
+	);
+};
+
+/**
+ * Performs a blocks preview using an iFrame.
+ *
+ * @param {object} props component's props
+ * @param {Array}  props.blocks array of Gutenberg Block objects
+ * @param {object} props.settings block Editor settings object
+ */
+const BlockPreviewRender = ( {
+	blocks,
+	settings,
+} ) => {
+	const renderedBlocksRef = useRef();
+
+	// Rendering blocks list.
+	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
+	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
+	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return (
+		<div className="block-preview-render__render-container" ref={ renderedBlocksRef }>
+			<BlockEditorProvider value={ blocks } settings={ settings }>
+				<Disabled key={ recomputeBlockListKey }>
+					<BlockList />
+				</Disabled>
+			</BlockEditorProvider>
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
