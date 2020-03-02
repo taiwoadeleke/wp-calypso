@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import BlockIframePreview from './block-frame-proxy';
+import BlockIframePreview from './block-preview-render';
 
 const TemplateSelectorPreview = ( { blocks = [], viewportWidth } ) => {
 	const noBlocks = ! blocks.length;

@@ -389,7 +389,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
-.block-frame-proxy {
+.block-preview-render {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -405,7 +405,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	width: 1440px;
 }
 
-.block-frame-proxy-body {
+.block-preview-render-body {
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden;

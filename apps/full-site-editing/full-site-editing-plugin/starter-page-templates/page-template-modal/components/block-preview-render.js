@@ -77,9 +77,9 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
  * @param {object} props.settings block Editor settings object
  * @param {Function} props.setTimeout safe version of window.setTimeout via `withSafeTimeout`
  */
-const BlockFrameProxy = ( {
-	className = 'block-frame-proxy',
-	bodyClassName = 'block-frame-proxy-body',
+const BlockPreviewRender = ( {
+	className = 'block-preview-render',
+	bodyClassName = 'block-preview-render-body',
 	viewportWidth,
 	blocks,
 	settings,
@@ -211,4 +211,4 @@ export default compose(
 			settings: blockEditorStore ? blockEditorStore.getSettings() : {},
 		};
 	} )
-)( BlockFrameProxy );
+)( BlockPreviewRender );
