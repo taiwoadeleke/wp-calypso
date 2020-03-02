@@ -38,6 +38,7 @@ $wp-org-admin-bar-full: 32px;
 $wp-org-admin-bar-mobile: 46px;
 
 // Modal Overlay
+.frame-preview-modal-screen-overlay,
 .page-template-modal-screen-overlay {
 	animation: none;
 	background-color: transparent; // hide the overlay visually
@@ -75,6 +76,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 // Full screen modal
+.frame-preview-modal,
 .page-template-modal {
 	width: 100%;
 	height: 100vh;
@@ -381,7 +383,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .sidebar-modal-opener__warning-options {
 	float: right;
 	margin-top: 20px;
-	
+
 	.components-button {
 		margin-left: 12px;
 	}
@@ -439,14 +441,14 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 
 	// Manual CSS Overrides. Remove after better solutions are in place.
-	
+
 	// Removes empty paragraph placeholders, i.e. "Write Title..."
 	[data-type='core/paragraph'] [data-rich-text-placeholder] {
 		display: none;
 	}
 
 	/*
-	* Fixes jetpack .wp-block-jetpack-slideshow styles, as the /wp-content/plugins/jetpack/_inc/blocks/vendors~swiper.[hash].css 
+	* Fixes jetpack .wp-block-jetpack-slideshow styles, as the /wp-content/plugins/jetpack/_inc/blocks/vendors~swiper.[hash].css
 	* file is loaded on block insert, not on page load. After the iframe is grabbing these styles, we can remove this code.
 	*/
 	.swiper-wrapper {
@@ -472,6 +474,55 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		&[data-type='core/cover'][data-align='full'] {
 			margin-top: 0;
 			margin-bottom: 0;
+		}
+	}
+}
+
+body.is-frame-preview {
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+
+	// Hide other elements
+	#wpwrap {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+	// Adjust Modal
+	.frame-preview-modal {
+		display: block;
+	}
+
+	.frame-preview-modal-screen-overlay {
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+
+	// Adjust modal.
+	.components-modal__content {
+		padding: 0;
+		margin: 0;
+	}
+	.components-modal__header {
+		display: none;
+	}
+
+	.frame-template-preview {
+		&.block-editor,
+		&.block-editor > .edit-post-visual-editor {
+			padding: 0;
+			margin: 0;
+		}
+
+		// Hide inserter/appender.
+		.block-list-appender,
+		.block-editor-inserter {
+			display: none !important;
+			visibility: hidden;
+			position: absolute;
+			left: -9999vw;
 		}
 	}
 }
