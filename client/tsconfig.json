@@ -22,5 +22,10 @@
 		{ "path": "../packages/react-i18n" }
 	],
 	"include": [ "**/*" ],
-	"exclude": [ "**/test/**/*", "server/bundler/assets*.json", "server/devdocs/search-index.js" ]
+	"exclude": [
+		"node_modules/**/*",
+		"**/test/**/*",
+		"server/bundler/assets*.json",
+		"server/devdocs/search-index.js"
+	]
 }
