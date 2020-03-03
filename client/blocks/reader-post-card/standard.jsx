@@ -12,6 +12,7 @@ import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 import ReaderExcerpt from 'blocks/reader-excerpt';
 import FeaturedAsset from './featured-asset';
+import Experiment, { Variation, DefaultVariation, LoadingVariations } from 'components/experiment';
 
 const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {
 	let onVideoThumbnailClick = null;
@@ -20,12 +21,25 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 	}
 	return (
 		<div className="reader-post-card__post">
-			<FeaturedAsset
-				canonicalMedia={ post.canonical_media }
-				postUrl={ post.URL }
-				onVideoThumbnailClick={ onVideoThumbnailClick }
-				isVideoExpanded={ isExpanded }
-			/>
+			<Experiment name={ 'calypso_a_a_test' }>
+				<LoadingVariations>Loading!</LoadingVariations>
+				<Variation name={ 'variation_a' }>
+					<FeaturedAsset
+						canonicalMedia={ post.canonical_media }
+						postUrl={ post.URL }
+						onVideoThumbnailClick={ onVideoThumbnailClick }
+						isVideoExpanded={ isExpanded }
+					/>
+				</Variation>
+				<DefaultVariation name={ 'control' }>
+					<FeaturedAsset
+						canonicalMedia={ post.canonical_media }
+						postUrl={ post.URL }
+						onVideoThumbnailClick={ onVideoThumbnailClick }
+						isVideoExpanded={ isExpanded }
+					/>
+				</DefaultVariation>
+			</Experiment>
 			<div className="reader-post-card__post-details">
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
