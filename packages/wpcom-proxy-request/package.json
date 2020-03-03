@@ -4,6 +4,7 @@
 	"description": "Proxied cookie-authenticated REST API requests to WordPress.com",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"types": "dist/types",
 	"sideEffects": false,
 	"keywords": [
 		"browser",
@@ -30,15 +31,14 @@
 	},
 	"files": [
 		"dist",
-		"types",
 		"History.md",
 		"README.md"
 	],
-	"types": "types",
 	"scripts": {
 		"clean": "npx rimraf dist",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
 		"prepublish": "npm run clean",
-		"prepare": "transpile"
+		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"debug": "^4.1.1",

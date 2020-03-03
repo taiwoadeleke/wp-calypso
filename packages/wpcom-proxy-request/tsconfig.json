@@ -1,0 +1,36 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"lib": [ "DOM", "ES2015" ],
+		"module": "esnext",
+		"allowJs": false,
+		"jsx": "react",
+		"declaration": true,
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
+		"rootDir": "src",
+
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		/** TODO: Remove to increase strictness when types are improved */
+		"noImplicitAny": false,
+		/** /TODO */
+
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+
+		"forceConsistentCasingInFileNames": true,
+
+		"typeRoots": [ "./types" ],
+
+		"importHelpers": true,
+		"incremental": true,
+		"tsBuildInfoFile": "../../.tsc-cache/wpcom-proxy-request"
+	},
+	"files": [ "src/index.ts" ],
+	"exclude": [ "**/docs/*", "**/test/*" ]
+}
