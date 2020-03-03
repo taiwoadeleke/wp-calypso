@@ -425,6 +425,8 @@ class PageTemplateModal extends Component {
 								blocks={ this.getBlocksForPreview( previewedTemplate ) }
 								viewportWidth={ 1200 }
 								title={ this.getTitleByTemplateSlug( previewedTemplate ) }
+								blocksByTemplatesSlug={ this.getBlocksByTemplateSlugs( this.props.templates ) }
+								slug= { this.state.previewedTemplate }
 							/>
 						</>
 					) }

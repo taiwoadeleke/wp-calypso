@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, castArray, debounce } from 'lodash';
+import { get, castArray, debounce, noop } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -31,6 +31,8 @@ const DEBOUNCE_TIMEOUT = 300;
 export const BlockPreviewFrame = ( {
 	viewportWidth,
 	className = 'block-preview-render',
+	onFrameReady = noop,
+	blocksByTemplatesSlug = {},
 } ) => {
 	const iframeRef = useRef();
 
@@ -62,7 +64,19 @@ export const BlockPreviewFrame = ( {
 	}, [ viewportWidth ] );
 
 	// Set initial scale.
-	useEffect( rescale, [] );
+	useEffect( () => {
+		/*
+		 * Populate iframe window object with
+		 * parsed (already) blocks sorted by template slug.
+		 */
+		const frameWindow = get( iframeRef, [ 'current', 'contentWindow' ] );
+		if ( frameWindow ) {
+			frameWindow.blocksByTemplateSlug = blocksByTemplatesSlug;
+		}
+
+		rescale();
+		onFrameReady( iframeRef );
+	}, [] );
 
 	// Handling windows resize event.
 	useEffect( () => {
@@ -97,25 +111,35 @@ export const BlockPreviewFrame = ( {
 	)
 };
 
-export const BlockFrameContent = ( { unparsed_html } ) => {
-	const renderedBlocksRef = useRef();
-	// Getting template slug from parent post message.
-	const [ html, setHTML ] = useState( unparsed_html );
-	const receiveMessage = ( { data: slug } ) => {
-		if ( ! slug ) {
-			return;
-		}
-		setHTML( slug );
-	};
+const getBlocksByTemplateSlug = slug => {
+	if ( ! window.blocksByTemplateSlug || ! window.blocksByTemplateSlug[ slug ] ) {
+		return [];
+	}
+	return window.blocksByTemplateSlug[ slug ];
+};
 
-	// Listening parent messages.
+const _BlockFrameContent = ( { settings } ) => {
+	const [ slug, setSlug ] = useState();
+
+	// Listening messages.
 	useEffect( () => {
+		const receiveMessage = ( { data: slug } ) => {
+			if ( ! slug || ! window.blocksByTemplateSlug || ! window.blocksByTemplateSlug[ slug ] ) {
+				return;
+			}
+			setSlug( slug );
+		};
+
 		window.addEventListener( 'message', receiveMessage, false );
 
 		return () => {
 			window.removeEventListener( 'message', receiveMessage, false );
 		};
 	}, [] );
+
+	const renderedBlocks = useMemo( () => castArray( getBlocksByTemplateSlug( slug ) ), [ slug ] );
+	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
+	useLayoutEffect( triggerRecomputeBlockList, [ slug ] );
 
 	return (
 		<Modal
@@ -125,10 +149,16 @@ export const BlockFrameContent = ( { unparsed_html } ) => {
 			isDismissable={ false }
 			isDismissible={ false }
 		>
-			<div ref={ renderedBlocksRef } className="block-editor block-frame-preview__container">
+			<div className="block-editor block-frame-preview__container">
 				<div className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper">
-						<div className="editor-writing-flow"></div>
+						<div className="editor-writing-flow">
+							<BlockEditorProvider value={ renderedBlocks } settings={ settings }>
+								<Disabled key={ recomputeBlockListKey }>
+									<BlockList />
+								</Disabled>
+							</BlockEditorProvider>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -136,38 +166,7 @@ export const BlockFrameContent = ( { unparsed_html } ) => {
 	);
 };
 
-/**
- * Performs a blocks preview using an iFrame.
- *
- * @param {object} props component's props
- * @param {Array}  props.blocks array of Gutenberg Block objects
- * @param {object} props.settings block Editor settings object
- */
-const BlockPreviewRender = ( {
-	blocks,
-	settings,
-} ) => {
-	const renderedBlocksRef = useRef();
-
-	// Rendering blocks list.
-	const renderedBlocks = useMemo( () => castArray( blocks ), [ blocks ] );
-	const [ recomputeBlockListKey, triggerRecomputeBlockList ] = useReducer( state => state + 1, 0 );
-	useLayoutEffect( triggerRecomputeBlockList, [ blocks ] );
-
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	return (
-		<div className="block-preview-render__render-container" ref={ renderedBlocksRef }>
-			<BlockEditorProvider value={ blocks } settings={ settings }>
-				<Disabled key={ recomputeBlockListKey }>
-					<BlockList />
-				</Disabled>
-			</BlockEditorProvider>
-		</div>
-	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
-};
-
-export default compose(
+export const BlockFrameContent =  compose(
 	withSafeTimeout,
 	withSelect( select => {
 		const blockEditorStore = select( 'core/block-editor' );
@@ -175,4 +174,4 @@ export default compose(
 			settings: blockEditorStore ? blockEditorStore.getSettings() : {},
 		};
 	} )
-)( BlockPreviewRender );
+)( _BlockFrameContent );
