@@ -7,7 +7,10 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
+import * as dataHelper from '../data-helper';
 import * as driverHelper from '../driver-helper';
+
+const host = dataHelper.getJetpackHost();
 
 export default class MyPlanPage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -23,9 +26,10 @@ export default class MyPlanPage extends AsyncBaseContainer {
 	}
 
 	async isPremium() {
+		const planPrefix = host === 'WPCOM' ? 'wpcom' : 'jetpack';
 		return await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
-			By.css( 'img.is-premium-plan' )
+			By.css( `img.is-${ planPrefix }-premium` )
 		);
 	}
 }

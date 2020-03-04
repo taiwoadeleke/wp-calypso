@@ -6,10 +6,12 @@ import webdriver from 'selenium-webdriver';
 /**
  * Internal dependencies
  */
+import * as dataHelper from '../data-helper';
 import * as driverHelper from '../driver-helper.js';
 import AsyncBaseContainer from '../async-base-container';
 
 const by = webdriver.By;
+const host = dataHelper.getJetpackHost();
 
 export default class PurchasesPage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -21,7 +23,7 @@ export default class PurchasesPage extends AsyncBaseContainer {
 	}
 
 	async selectBusinessPlan() {
-		return await this._selectPlan( 'business' );
+		return await this._selectPlan( host === 'WPCOM' ? 'business' : 'professional' );
 	}
 
 	async selectPremiumPlan() {
@@ -64,15 +66,16 @@ export default class PurchasesPage extends AsyncBaseContainer {
 		await this._waitForPurchases();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( `a.purchase-item img.is-${ planName }-plan` )
+			by.css( `a.purchase-item img.is-${ planName }` )
 		);
 	}
 
 	async _selectPlanOnConnectedSite( planName ) {
 		await this._waitForPurchases();
+		const planPrefix = host === 'WPCOM' ? 'wpcom' : 'jetpack';
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( `a.purchase-item[data-e2e-connected-site=true] img.is-${ planName }-plan` )
+			by.css( `a.purchase-item[data-e2e-connected-site=true] img.is-${ planPrefix }-${ planName }` )
 		);
 	}
 }
