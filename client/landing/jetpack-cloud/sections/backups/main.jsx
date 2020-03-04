@@ -15,23 +15,20 @@ import { getBackupAttemptsForDate } from './utils';
 
 class BackupsPage extends Component {
 	state = {
-		currentDateSetting: false,
+		currentDateSetting: new Date(),
 	};
 
 	dateChange = currentDateSetting => this.setState( { currentDateSetting } );
 
 	render() {
 		const { logs, siteId } = this.props;
-		const initialDate = new Date();
-		const currentDateSetting = this.state.currentDateSetting
-			? this.state.currentDateSetting
-			: new Date().toISOString().split( 'T' )[ 0 ];
+		const { currentDateSetting } = this.state;
 
 		const backupAttempts = getBackupAttemptsForDate( logs, currentDateSetting );
 
 		return (
 			<div>
-				<DatePicker siteId={ siteId } initialDate={ initialDate } onChange={ this.dateChange } />
+				<DatePicker siteId={ siteId } date={ currentDateSetting } onChange={ this.dateChange } />
 				<DailyBackupStatus date={ currentDateSetting } backupAttempts={ backupAttempts } />
 			</div>
 		);
