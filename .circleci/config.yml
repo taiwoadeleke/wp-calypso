@@ -65,13 +65,13 @@ references:
   restore-tsc-cache: &restore-tsc-cache
     name: Restore TypeScript cache
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-tsc-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-tsc-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-tsc-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-tsc
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-tsc-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-tsc-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-tsc-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-tsc
   save-tsc-cache: &save-tsc-cache
     name: Save TypeScript cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-tsc-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-tsc-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/wp-calypso/.tsc-cache
       - ~/wp-calypso/packages/*/dist
