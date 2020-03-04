@@ -12,6 +12,9 @@ import { requestActivityLogs } from 'state/data-getters';
 import DatePicker from '../../components/date-picker';
 import DailyBackupStatus from '../../components/daily-backup-status';
 import { getBackupAttemptsForDate } from './utils';
+import getRewindState from 'state/selectors/get-rewind-state';
+import QueryRewindState from 'components/data/query-rewind-state';
+import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
 
 class BackupsPage extends Component {
 	state = {
@@ -21,7 +24,7 @@ class BackupsPage extends Component {
 	dateChange = currentDateSetting => this.setState( { currentDateSetting } );
 
 	render() {
-		const { logs, siteId } = this.props;
+		const { allowRestore, logs, siteId, siteSlug } = this.props;
 		const initialDate = new Date();
 		const currentDateSetting = this.state.currentDateSetting
 			? this.state.currentDateSetting
@@ -31,8 +34,14 @@ class BackupsPage extends Component {
 
 		return (
 			<div>
+				<QueryRewindState siteId={ siteId } />
 				<DatePicker siteId={ siteId } initialDate={ initialDate } onChange={ this.dateChange } />
-				<DailyBackupStatus date={ currentDateSetting } backupAttempts={ backupAttempts } />
+				<DailyBackupStatus
+					allowRestore={ allowRestore }
+					date={ currentDateSetting }
+					backupAttempts={ backupAttempts }
+					siteSlug={ siteSlug }
+				/>
 			</div>
 		);
 	}
@@ -41,9 +50,16 @@ class BackupsPage extends Component {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const logs = siteId && requestActivityLogs( siteId, { group: 'rewind' } );
+	const rewind = getRewindState( state, siteId );
+	const restoreStatus = rewind.rewind && rewind.rewind.status;
+	const allowRestore =
+		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
 
 	return {
-		siteId,
+		allowRestore,
 		logs: logs?.data ?? [],
+		rewind,
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
 	};
 } )( BackupsPage );
