@@ -463,7 +463,6 @@ class DomainsStep extends React.Component {
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
-				showTestCopy={ this.showTestCopy }
 				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
