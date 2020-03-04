@@ -3,8 +3,9 @@
 	"compilerOptions": {
 		"composite": false,
 		"incremental": true,
+		"rootDir": ".",
 		"tsBuildInfoFile": "../../../.tsc-cache/gutenboarding"
 	},
-	"files": [ "./index.tsx" ],
+	"files": [ "index.tsx" ],
 	"include": []
 }

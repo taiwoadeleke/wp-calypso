@@ -7,7 +7,6 @@
 
 		"baseUrl": ".",
 		"rootDir": ".",
-		"paths": { "*": [ "./*" ] },
 		"tsBuildInfoFile": "../.tsc-cache/client",
 		"noEmit": true,
 		"composite": true,
@@ -23,7 +22,7 @@
 	],
 	"include": [ "**/*" ],
 	"exclude": [
-		"node_modules/**/*",
+		"../**/node_modules/**/*",
 		"**/test/**/*",
 		"server/bundler/assets*.json",
 		"server/devdocs/search-index.js"
