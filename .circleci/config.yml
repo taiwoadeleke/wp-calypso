@@ -27,7 +27,7 @@ references:
         "$CIRCLE_TEST_REPORTS/server"           \
         "$CIRCLE_TEST_REPORTS/e2ereports"       \
         "$HOME/jest-cache"                      \
-        "$HOME/.tsc-cache"                      \
+        "$HOME/wp-calypso/.tsc-cache"           \
         "$HOME/terser-cache"
 
   # Jest cache caching
@@ -73,7 +73,8 @@ references:
     name: Save TypeScript cache
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-tsc-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ~/.tsc-cache
+      - ~/wp-calypso/.tsc-cache
+      - ~/wp-calypso/packages/*/dist
 
   #
   # Terser cache caching
